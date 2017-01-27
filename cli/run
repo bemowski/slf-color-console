@@ -1,0 +1,12 @@
+#!/bin/bash
+
+unset LOCALCLASSPATH
+for jar in $(find ../libs -name *.jar) 
+do
+	echo "Jar: $jar"
+	LOCALCLASSPATH=$jar:$LOCALCLASSPATH
+done	
+echo $LOCALCLASSPTH
+
+java -cp $LOCALCLASSPATH $*
+
