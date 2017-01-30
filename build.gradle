@@ -9,6 +9,9 @@
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'  // required for sonatype
+
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -40,3 +43,37 @@ task copyCLI(type: Copy) {
 }
 
 build.finalizedBy(copyRuntimeLibs, copyCLI)
+
+//  Maven publish to sonatype
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'net.jmatrix'
+            artifactId 'slf-color-console'
+            version '1.0.0'
+
+            from components.java
+        }
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+ 
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+signing {
+    sign configurations.archives
+}
+
+

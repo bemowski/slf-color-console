@@ -58,7 +58,6 @@ public class LogWriter {
       return key+s+ANSI_RESET;
    }
    
-   /** */
    public static final String stackString(Throwable ex) {
       ByteArrayOutputStream baos=new ByteArrayOutputStream();
       PrintWriter pw=new PrintWriter(new OutputStreamWriter(baos));
@@ -66,5 +65,4 @@ public class LogWriter {
       pw.flush();
       return baos.toString();
    }
-
 }
