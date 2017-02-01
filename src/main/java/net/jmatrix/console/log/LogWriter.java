@@ -18,8 +18,12 @@ public class LogWriter {
    public static final String ANSI_CYAN = "\u001B[36m";
    public static final String ANSI_WHITE = "\u001B[37m";
    
+   // trace, debug, info -> out
    PrintWriter out=new PrintWriter(new OutputStreamWriter(System.out), true);
    
+   // Warn and Error -> err
+   PrintWriter err=new PrintWriter(new OutputStreamWriter(System.err), true);
+
    void trace(String msg, Throwable t) {
       out.println(msg);
       if (t != null)
@@ -41,16 +45,16 @@ public class LogWriter {
    
    
    void error(String s, Throwable t) {
-      out.println(color(ANSI_RED, s));
+      err.println(color(ANSI_RED, s));
       if (t != null)
-         out.println(color(ANSI_RED, stackString(t)));
+         err.println(color(ANSI_RED, stackString(t)));
    }
    
    
    void warn(String s, Throwable t) {
-      out.println(color(ANSI_YELLOW,s));
+      err.println(color(ANSI_YELLOW,s));
       if (t != null)
-         out.println(color(ANSI_YELLOW, stackString(t)));
+         err.println(color(ANSI_YELLOW, stackString(t)));
    }
    
    

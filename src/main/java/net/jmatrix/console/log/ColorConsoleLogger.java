@@ -92,15 +92,15 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
 
    @Override
    public void debug(String msg, Throwable t) {
-      writer.debug(msg, t);
+      if (isDebugEnabled())
+         writer.debug(msg, t);
    }
-
+   //////////////////////////// INFO ////////////////////////////////
    @Override
    public boolean isInfoEnabled() {
       return getLevel().getILevel() >= Level.INFO.getILevel();
    }
 
-   //////////////////////////// INFO ////////////////////////////////
    @Override
    public void info(String msg) {
        info(msg, (Throwable)null);
@@ -123,7 +123,8 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
 
    @Override
    public void info(String msg, Throwable t) {
-      writer.info(msg, t);
+      if (isInfoEnabled())
+         writer.info(msg, t);
    }
 
    //////////////////////////// WARN ////////////////////////////////
@@ -154,7 +155,8 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
 
    @Override
    public void warn(String msg, Throwable t) {
-      writer.warn(msg, t);
+      if (isWarnEnabled())
+         writer.warn(msg, t);
    }
 
    //////////////////////////// ERROR ////////////////////////////////
@@ -185,7 +187,8 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
 
    @Override
    public void error(String msg, Throwable t) {
-      writer.error(msg, t);
+      if (isErrorEnabled())
+         writer.error(msg, t);
    }
 
 }

@@ -18,6 +18,7 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenLocal()
 }
 
 dependencies {
@@ -44,13 +45,15 @@ task copyCLI(type: Copy) {
 
 build.finalizedBy(copyRuntimeLibs, copyCLI)
 
-//  Maven publish to sonatype
+// Maven publish to sonatype (for maven central)
+// http://jedicoder.blogspot.com/2011/11/automated-gradle-project-deployment-to.html
+//   gradle publishToMavenLocal
 publishing {
     publications {
         maven(MavenPublication) {
             groupId 'net.jmatrix'
             artifactId 'slf-color-console'
-            version '1.0.0'
+            version '1.0.1'
 
             from components.java
         }
