@@ -9,8 +9,12 @@
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'  // required for sonatype
+
+group = 'net.jmatrix'
+version = '1.0.1'
 
 
 // In this section you declare where to find the dependencies of your project
@@ -79,4 +83,42 @@ signing {
     sign configurations.archives
 }
 
-
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+ 
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+              authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+ 
+            pom.project {
+               name 'slf-color-console'
+               packaging 'jar'
+               description 'slf-color-console is a binding and implementation to log to System.err, System.out. with ansi color.'
+               url 'http://gradlefx.github.com/'
+ 
+               scm {
+                   url 'scm:git@github.com:bemowski/slf-color-console.git'
+                   connection 'scm:git@github.com:bemowski/slf-color-console.git'
+                   developerConnection 'scm:git@github.com:bemowski/slf-color-console.git'
+               }
+ 
+               licenses {
+                   license {
+                       name 'The Apache Software License, Version 2.0'
+                       url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                       distribution 'repo'
+                   }
+               }
+ 
+               developers {
+                   developer {
+                       id 'bemowski'
+                       name 'Paul Bemowski'
+                   }
+               }
+           }
+        }
+    }
+}
