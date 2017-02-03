@@ -6,22 +6,33 @@
  * user guide available at https://docs.gradle.org/3.3/userguide/tutorial_java_projects.html
  */
 
+buildscript {
+    repositories {
+        mavenCentral()
+        //Needed only for SNAPSHOT versions
+        //maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+    dependencies {
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+    }
+}
+
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'  // required for sonatype
+apply plugin: 'io.codearte.nexus-staging'
 
 group = 'net.jmatrix'
-version = '1.0.1'
+version = '1.0.2'
 
 
 // In this section you declare where to find the dependencies of your project
 repositories {
-    // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
     mavenLocal()
 }
 
@@ -50,14 +61,15 @@ task copyCLI(type: Copy) {
 build.finalizedBy(copyRuntimeLibs, copyCLI)
 
 // Maven publish to sonatype (for maven central)
-// http://jedicoder.blogspot.com/2011/11/automated-gradle-project-deployment-to.html
+// AN OLDER POST, SOME INFO: http://jedicoder.blogspot.com/2011/11/automated-gradle-project-deployment-to.html
+// http://central.sonatype.org/pages/gradle.html
 //   gradle publishToMavenLocal
 publishing {
     publications {
         maven(MavenPublication) {
             groupId 'net.jmatrix'
             artifactId 'slf-color-console'
-            version '1.0.1'
+            version version
 
             from components.java
         }
@@ -121,4 +133,13 @@ uploadArchives {
            }
         }
     }
+}
+
+// After publish with 
+//   gradle uploadArchieves
+// promote with:
+//   gradle closeAndPromoteRepository
+nexusStaging {
+    packageGroup = group //optional if packageGroup == project.getGroup()
+//    stagingProfileId = "yourStagingProfileId" //when not defined will be got from server using "packageGroup"
 }

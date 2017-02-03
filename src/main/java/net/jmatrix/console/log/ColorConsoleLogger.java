@@ -1,6 +1,7 @@
 package net.jmatrix.console.log;
 
 import org.slf4j.Logger;
+import org.slf4j.event.Level;
 import org.slf4j.helpers.MarkerIgnoringBase;
 
 public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
@@ -12,7 +13,7 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    static LogWriter writer=null;
    
    {
-      writer=new LogWriter();
+      writer=new ConsoleLogWriter();
    }
    
    public ColorConsoleLogger(String name) {
@@ -34,7 +35,7 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    //////////////////////////// TRACE ////////////////////////////////
    @Override
    public boolean isTraceEnabled() {
-      return getLevel().getILevel() >= Level.ALL.getILevel();
+      return getLevel().toInt() <= Level.TRACE.toInt();
    }
 
    @Override
@@ -60,13 +61,13 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void trace(String msg, Throwable t) {
       if (isTraceEnabled())
-         writer.trace(msg, t);
+         writer.write(Level.TRACE, name, msg, t);
    }
 
    //////////////////////////// DEBUG ////////////////////////////////
    @Override
    public boolean isDebugEnabled() {
-      return getLevel().getILevel() >= Level.DEBUG.getILevel();
+      return getLevel().toInt() <= Level.DEBUG.toInt();
    }
 
    
@@ -93,12 +94,12 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void debug(String msg, Throwable t) {
       if (isDebugEnabled())
-         writer.debug(msg, t);
+         writer.write(Level.DEBUG, name, msg, t);
    }
    //////////////////////////// INFO ////////////////////////////////
    @Override
    public boolean isInfoEnabled() {
-      return getLevel().getILevel() >= Level.INFO.getILevel();
+      return getLevel().toInt() <= Level.INFO.toInt();
    }
 
    @Override
@@ -124,18 +125,18 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void info(String msg, Throwable t) {
       if (isInfoEnabled())
-         writer.info(msg, t);
+         writer.write(Level.INFO, name, msg, t);
    }
 
    //////////////////////////// WARN ////////////////////////////////
    @Override
    public boolean isWarnEnabled() {
-      return getLevel().getILevel() >= Level.WARN.getILevel();
+      return getLevel().toInt() <= Level.WARN.toInt();
    }
 
    @Override
    public void warn(String msg) {
-      writer.warn(msg, (Throwable)null);
+      warn(msg, (Throwable)null);
    }
 
    @Override
@@ -156,18 +157,18 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void warn(String msg, Throwable t) {
       if (isWarnEnabled())
-         writer.warn(msg, t);
+         writer.write(Level.WARN, name, msg, t);
    }
 
    //////////////////////////// ERROR ////////////////////////////////
    @Override
    public boolean isErrorEnabled() {
-      return getLevel().getILevel() >= Level.ERROR.getILevel();
+      return getLevel().toInt() <= Level.ERROR.toInt();
    }
 
    @Override
    public void error(String msg) {
-      writer.error(msg, (Throwable)null);
+      error(msg, (Throwable)null);
    }
 
    @Override
@@ -188,7 +189,7 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void error(String msg, Throwable t) {
       if (isErrorEnabled())
-         writer.error(msg, t);
+         writer.write(Level.ERROR, name, msg, t);
    }
 
 }

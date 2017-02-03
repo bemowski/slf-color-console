@@ -15,4 +15,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'slf.color.console'
+rootProject.name = 'slf-color-console'

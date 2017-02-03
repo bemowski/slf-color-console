@@ -1,72 +1,7 @@
 package net.jmatrix.console.log;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import org.slf4j.event.Level;
 
-/**
- * Responsible for writing, with color, if able.
- */
-public class LogWriter {
-   public static final String ANSI_RESET = "\u001B[0m";
-   public static final String ANSI_BLACK = "\u001B[30m";
-   public static final String ANSI_RED = "\u001B[31m";
-   public static final String ANSI_GREEN = "\u001B[32m";
-   public static final String ANSI_YELLOW = "\u001B[33m";
-   public static final String ANSI_BLUE = "\u001B[34m";
-   public static final String ANSI_PURPLE = "\u001B[35m";
-   public static final String ANSI_CYAN = "\u001B[36m";
-   public static final String ANSI_WHITE = "\u001B[37m";
-   
-   // trace, debug, info -> out
-   PrintWriter out=new PrintWriter(new OutputStreamWriter(System.out), true);
-   
-   // Warn and Error -> err
-   PrintWriter err=new PrintWriter(new OutputStreamWriter(System.err), true);
-
-   void trace(String msg, Throwable t) {
-      out.println(msg);
-      if (t != null)
-         out.print(stackString(t));
-   }
-   
-   void info(String msg, Throwable t) {
-      out.println(msg);
-      if (t != null)
-         out.print(stackString(t));
-   }
-   
-   void debug(String msg, Throwable t) {
-      out.println(msg);
-      if (t != null)
-         out.print(stackString(t));
-   }
-   
-   
-   
-   void error(String s, Throwable t) {
-      err.println(color(ANSI_RED, s));
-      if (t != null)
-         err.println(color(ANSI_RED, stackString(t)));
-   }
-   
-   
-   void warn(String s, Throwable t) {
-      err.println(color(ANSI_YELLOW,s));
-      if (t != null)
-         err.println(color(ANSI_YELLOW, stackString(t)));
-   }
-   
-   
-   private static final String color(String key, String s) {
-      return key+s+ANSI_RESET;
-   }
-   
-   public static final String stackString(Throwable ex) {
-      ByteArrayOutputStream baos=new ByteArrayOutputStream();
-      PrintWriter pw=new PrintWriter(new OutputStreamWriter(baos));
-      ex.printStackTrace(pw);
-      pw.flush();
-      return baos.toString();
-   }
+public interface LogWriter {
+   public void write(Level level, String loggerName, String message, Throwable t);
 }
