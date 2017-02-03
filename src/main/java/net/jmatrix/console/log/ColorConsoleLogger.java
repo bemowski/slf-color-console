@@ -23,7 +23,8 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    
    static Formatter formatter=null;
    
-   {
+   static {
+      // some simple defaults.
       writer=new ConsoleLogWriter();
       formatter=new ANSIColorFormatter();
    }
@@ -54,10 +55,16 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
       lr.setMillis(System.currentTimeMillis());
       lr.setLoggerName(name);
       
-      lr.setThrown(t);
+      lr.setThrown(t); 
       
-      String formattedMessage=formatter.format(lr);
-      writer.write(getLevel(), formattedMessage);
+      formatAndWrite(level, lr);
+   }
+   
+   static final void formatAndWrite(Level level, LogRecord lr) {
+      if (ColorConsoleLogger.level.toInt() <= level.toInt()) {
+         String formattedMessage=formatter.format(lr);
+         writer.write(level, formattedMessage);
+      }
    }
    
    Level getLevel() {

@@ -3,8 +3,13 @@ package net.jmatrix.console.log;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
-import org.slf4j.event.Level;
+import org.slf4j.event.Level;;
 
 public class ColorConsoleConfig {
    public static final String ANSIColorFormatter="ANSIColorFormatter";
@@ -61,6 +66,15 @@ public class ColorConsoleConfig {
       }
       
       String formatter=props.getProperty("slf.cc.formatter");
+      setFormatter(formatter);
+   }
+   
+   public static void setLevel(Level level) {
+      if (level != null)
+         ColorConsoleLogger.setGlobalLevel(level);
+   }
+   
+   public static void setFormatter(String formatter) {
       if (formatter != null) {
          if (validFormatters.contains(formatter)) {
             if (formatter.equals(ANSIColorFormatter)){
@@ -69,6 +83,38 @@ public class ColorConsoleConfig {
                ColorConsoleLogger.setFormatter(new SimpleFormatter());
             }
          }
+      }
+   }
+   
+   static Handler julHandler=null;
+   
+   public static void setAsJavaUtilLoggingHandler() {
+      LogManager logManager=LogManager.getLogManager();
+      
+      Logger logger=Logger.getLogger("");
+      logger.removeHandler(logger.getHandlers()[0]);
+      
+      if (julHandler == null) {
+         julHandler=new ColorConsoleHandler();
+      }
+
+      logger.addHandler(julHandler);
+      
+      logger.setLevel(java.util.logging.Level.ALL);
+   }
+   
+   static class ColorConsoleHandler extends Handler {
+      @Override
+      public void close() throws SecurityException {
+      }
+
+      @Override
+      public void flush() {
+      }
+
+      @Override
+      public void publish(LogRecord record) {
+         ColorConsoleLogger.formatAndWrite(LevelMapper.julToSlfLevel(record.getLevel()), record);
       }
    }
 }
