@@ -1,33 +1,69 @@
 package net.jmatrix.console.log;
 
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
+
 import org.slf4j.Logger;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.MarkerIgnoringBase;
 
+@SuppressWarnings("serial")
 public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
+   
+   /** Logger name, typically class name. */
    String name;
    
-   static Level level=Level.WARN;
+   /** Theoretically allow per-logger level, but there is no way to configure
+    * it at this time.*/
    Level ilevel=null;
+   
+   static Level level=Level.WARN;
    
    static LogWriter writer=null;
    
+   static Formatter formatter=null;
+   
    {
       writer=new ConsoleLogWriter();
+      formatter=new ANSIColorFormatter();
    }
    
    public ColorConsoleLogger(String name) {
       this.name=name;
    }
    
+   public static void setGlobalLevel(Level l) {
+      level=l;
+   }
+   public static Level getGlobalLevel() {return level;}
+   
+   public static void setFormatter(Formatter f) {
+      formatter=f;
+   }
+   public static Formatter getFormatter() {return formatter;}
+   
+   public static void setWriter(LogWriter w) {
+      writer=w;
+   }
+   
+   public static LogWriter getWriter() {return writer;}
+   
+   //////////////////////////////////////////////////////////////////////////////
+   final void formatAndWrite(Level level, String message, Throwable t) {
+      LogRecord lr=new LogRecord(LevelMapper.slfToJulLevel(level), message);
+      lr.setMillis(System.currentTimeMillis());
+      lr.setLoggerName(name);
+      
+      lr.setThrown(t);
+      
+      String formattedMessage=formatter.format(lr);
+      writer.write(getLevel(), formattedMessage);
+   }
+   
    Level getLevel() {
       if (ilevel != null)
          return ilevel;
       return level;
-   }
-   
-   public static void setGlobalLevel(Level l) {
-      level=l;
    }
    
    // trace, debug, info, warn, error
@@ -61,7 +97,7 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void trace(String msg, Throwable t) {
       if (isTraceEnabled())
-         writer.write(Level.TRACE, name, msg, t);
+         formatAndWrite(Level.TRACE, msg, t);
    }
 
    //////////////////////////// DEBUG ////////////////////////////////
@@ -94,7 +130,7 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void debug(String msg, Throwable t) {
       if (isDebugEnabled())
-         writer.write(Level.DEBUG, name, msg, t);
+         formatAndWrite(Level.DEBUG, msg, t);
    }
    //////////////////////////// INFO ////////////////////////////////
    @Override
@@ -125,7 +161,7 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void info(String msg, Throwable t) {
       if (isInfoEnabled())
-         writer.write(Level.INFO, name, msg, t);
+         formatAndWrite(Level.INFO,msg, t);
    }
 
    //////////////////////////// WARN ////////////////////////////////
@@ -157,7 +193,7 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void warn(String msg, Throwable t) {
       if (isWarnEnabled())
-         writer.write(Level.WARN, name, msg, t);
+         formatAndWrite(Level.WARN, msg, t);
    }
 
    //////////////////////////// ERROR ////////////////////////////////
@@ -189,7 +225,6 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    @Override
    public void error(String msg, Throwable t) {
       if (isErrorEnabled())
-         writer.write(Level.ERROR, name, msg, t);
+         formatAndWrite(Level.ERROR, msg, t);
    }
-
 }

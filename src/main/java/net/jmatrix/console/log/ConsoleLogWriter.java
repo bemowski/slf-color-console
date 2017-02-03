@@ -1,11 +1,10 @@
 package net.jmatrix.console.log;
 
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Formatter;
-import java.util.logging.LogRecord;
 
 import org.slf4j.event.Level;
 
@@ -13,7 +12,6 @@ import org.slf4j.event.Level;
  * Responsible for writing, with color, if able.
  */
 public class ConsoleLogWriter implements LogWriter {
-   Formatter formatter=new ANSIColorFormatter();
    
    // trace, debug, info -> out
    PrintWriter out=new PrintWriter(new OutputStreamWriter(System.out), true);
@@ -28,18 +26,26 @@ public class ConsoleLogWriter implements LogWriter {
       writerMap.put(Level.WARN, err);
       writerMap.put(Level.ERROR, err);
    }
+   
+   public void setLevelStream(Level level, PrintStream ps) {
+      if (ps == System.out)
+         writerMap.put(level, out);
+      if (ps == System.err) 
+         writerMap.put(level, err);
+   }
+   
+   public void setDefaultStream(PrintStream ps) {
+      if (ps == System.out)
+         defaultWriter=out;
+      else if (ps == System.err)
+         defaultWriter=err;
+   }
 
    @Override
-   public void write(Level level, String loggerName, String message, Throwable t) {
+   public void write(Level level, String formattedMessage) {
       PrintWriter pw=writerMap.get(level);
       if (pw == null)
          pw=defaultWriter;
-      LogRecord lr=new LogRecord(LevelMapper.slfToJulLevel(level), message);
-      lr.setMillis(System.currentTimeMillis());
-      lr.setLoggerName(loggerName);
-      
-      lr.setThrown(t);
-      
-      pw.println(formatter.format(lr));
+      pw.println(formattedMessage);
    }
 }

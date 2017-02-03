@@ -3,5 +3,5 @@ package net.jmatrix.console.log;
 import org.slf4j.event.Level;
 
 public interface LogWriter {
-   public void write(Level level, String loggerName, String message, Throwable t);
+   public void write(Level level, String formattedMessage);
 }
