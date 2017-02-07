@@ -3,7 +3,6 @@ package net.jmatrix.console.log;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
@@ -27,7 +26,7 @@ public class ColorConsoleConfig {
    // slf.cc.writer.[ERROR,WARN,INFO,DEBUG,TRACE] = [out, err]
    // slf.cc.formatter=ANSIColorFormatter  [ANSIColorFormatter|SimpleFormatter]
    // slf.cc.level=[ERROR,WARN,INFO,DEBUG,TRACE]
-   
+   // slf.cc.java.util.logging=[true,false] default=false
    
    public static void configure(Properties props) {
       String slevel=props.getProperty("slf.cc.level", "WARN");
@@ -67,6 +66,11 @@ public class ColorConsoleConfig {
       
       String formatter=props.getProperty("slf.cc.formatter");
       setFormatter(formatter);
+      
+      String jul=props.getProperty("slf.cc.java.util.logging");
+      if (jul != null && jul.toLowerCase().equals("true")) {
+         setAsJavaUtilLoggingHandler();
+      }
    }
    
    public static void setLevel(Level level) {

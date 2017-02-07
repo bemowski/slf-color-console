@@ -23,6 +23,30 @@ This is designed specifically for small command line or console apps that have l
    - The LogWriter can output various levels of logging to various streams.  (think System.out, System.err)
  - The Log level is typically set globally for output.  However individual loggers can have different log levels, its not simple to configure.
 
+## Configuration via Properties
+
+Create a java.util.Properties object, and add any of fht properties detailed below.  Then call the static method:
+
+    ColorConsoleConfig.configure(properties);
+
+## Properties
+
+Set the logging level.  
+
+    slf.cc.level=[ERROR,WARN,INFO,DEBUG,TRACE]
+
+The writer can log to either System.err or System.out.  These properties allow for setting the default stream, and level specific streams.  
+
+    slf.cc.writer.default.stream=out  [out|err]
+    slf.cc.writer.[ERROR,WARN,INFO,DEBUG,TRACE] = [out, err]
+
+There are 2 available formatters. Simple formatter adds no context.  ANSIColorFormatter adds timestamp, thread, logger name with some color.
+
+    slf.cc.formatter=ANSIColorFormatter  [ANSIColorFormatter|SimpleFormatter]
+   
+This property sets the SLFColorConsole as the default Handler for java.util.logging.  
+
+    slf.cc.java.util.logging=[true,false] default=false
 
 ## Formatter
 
@@ -52,3 +76,10 @@ Levels is set using org.slf4j.event.Level levels - referred to as (in order of i
 
 The LogWriter writes the formatted message to a configured PrintWriter.  Very typically this would be PrintWriters wrapping System.out and System.err.
 
+# Releases
+
+1.0.5 - adding config property for java.util.logging bridge
+
+1.0.4 - adding bridge for java.util.logging root logger.
+
+1.0.3 - configuration stuff
