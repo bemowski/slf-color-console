@@ -26,8 +26,10 @@ apply plugin: 'signing'  // required for sonatype
 apply plugin: 'io.codearte.nexus-staging'
 
 group = 'net.jmatrix'
-version = '1.0.5'
+version = '1.0.6'
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 // In this section you declare where to find the dependencies of your project
 repositories {

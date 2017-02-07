@@ -78,6 +78,8 @@ The LogWriter writes the formatted message to a configured PrintWriter.  Very ty
 
 # Releases
 
+1.0.6 - back off to java 1.7 compatibility.  (was defaulting to java 8)
+
 1.0.5 - adding config property for java.util.logging bridge
 
 1.0.4 - adding bridge for java.util.logging root logger.
