@@ -6,6 +6,7 @@ import java.util.logging.LogRecord;
 import org.slf4j.Logger;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.MarkerIgnoringBase;
+import org.slf4j.impl.StaticLoggerBinder;
 
 @SuppressWarnings("serial")
 public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
@@ -13,11 +14,9 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    /** Logger name, typically class name. */
    String name;
    
-   /** Theoretically allow per-logger level, but there is no way to configure
-    * it at this time.*/
    Level ilevel=null;
    
-   static Level level=Level.WARN;
+   static Level globalLevel=Level.WARN;
    
    static LogWriter writer=null;
    
@@ -34,9 +33,11 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    }
    
    public static void setGlobalLevel(Level l) {
-      level=l;
+      if (l == null)
+         throw new NullPointerException("Global logging level cannot be null.");
+      globalLevel=l;
    }
-   public static Level getGlobalLevel() {return level;}
+   public static Level getGlobalLevel() {return globalLevel;}
    
    public static void setFormatter(Formatter f) {
       formatter=f;
@@ -49,6 +50,10 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
    
    public static LogWriter getWriter() {return writer;}
    
+   public void setLevel(Level l) {
+      this.ilevel=l;
+   }
+   
    //////////////////////////////////////////////////////////////////////////////
    final void formatAndWrite(Level level, String message, Throwable t) {
       LogRecord lr=new LogRecord(LevelMapper.slfToJulLevel(level), message);
@@ -57,21 +62,53 @@ public class ColorConsoleLogger extends MarkerIgnoringBase implements Logger {
       
       lr.setThrown(t); 
       
-      formatAndWrite(level, lr);
+      formatAndWrite(getLevel(), lr);
    }
    
    static final void formatAndWrite(Level level, LogRecord lr) {
-      if (ColorConsoleLogger.level.toInt() <= level.toInt()) {
+      if (ColorConsoleLogger.globalLevel.toInt() <= level.toInt()) {
          String formattedMessage=formatter.format(lr);
          writer.write(level, formattedMessage);
       }
    }
    
-   Level getLevel() {
-      if (ilevel != null)
-         return ilevel;
+   final Level getLevel() {
+      //System.out.print("   "+name+".getLevel() ");
+      
+      Level level=null;
+      if (ilevel != null) {
+         System.out.println(" this ("+name+") is "+ilevel);
+         level=ilevel;
+      }
+      
+      ColorConsoleLogger parent=findParentWithLevel(name);
+      if (parent != null) {
+         //System.out.println(" parentLevel ("+parent.name+") is "+parent.ilevel);
+         level=parent.ilevel;
+      } else {
+         //System.out.println(" globalLevel = "+globalLevel);
+         level=globalLevel; // nevernull
+      }
       return level;
    }
+   
+   // Assume names are '.' delimited.
+   private static final ColorConsoleLogger findParentWithLevel(String name) {
+      if (name == null || name.length() == 0) return null;
+      int lastdot=name.lastIndexOf(".");
+      ConsoleLoggerFactory factory=(ConsoleLoggerFactory)StaticLoggerBinder.getSingleton().getLoggerFactory();
+      String parentName=null;
+      if (lastdot == -1)
+         parentName="";
+      else
+         parentName=name.substring(0, lastdot);
+      
+      ColorConsoleLogger logger=(ColorConsoleLogger)factory.getLoggerIfExists(parentName);
+      if (logger != null && logger.ilevel != null)
+         return logger;
+      return findParentWithLevel(parentName);
+   }
+   
    
    // trace, debug, info, warn, error
    

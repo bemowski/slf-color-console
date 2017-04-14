@@ -27,4 +27,8 @@ public class ConsoleLoggerFactory implements ILoggerFactory {
    private Logger buildLogger(String name) {
       return new ColorConsoleLogger(name);
    }
+   
+   public Logger getLoggerIfExists(String name) {
+      return map.get(name);
+   }
 }

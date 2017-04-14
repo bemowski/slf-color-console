@@ -40,7 +40,6 @@ public class ANSIColorFormatter extends Formatter {
       levelName.put(Level.INFO, "I");
       levelName.put(Level.DEBUG, "D");
       levelName.put(Level.TRACE, "T");
-
    }
    
    public void setLevelColor(Level level, String color) {
@@ -59,7 +58,8 @@ public class ANSIColorFormatter extends Formatter {
       
       sb.append(" ["+getLevelString(record.getLevel())+"]");
       sb.append(" {"+Thread.currentThread().getName()+"} ");
-      sb.append(shortLoggerName(record.getLoggerName()+": "));
+      sb.append(shortLoggerName(record.getLoggerName())+": ");
+      //sb.append(record.getLoggerName()+": ");
       
       sb.append(record.getMessage());
       
