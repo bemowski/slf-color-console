@@ -26,7 +26,7 @@ apply plugin: 'signing'  // required for sonatype
 apply plugin: 'io.codearte.nexus-staging'
 
 group = 'net.jmatrix'
-version = '1.0.7'
+version = '1.0.8'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -98,6 +98,10 @@ signing {
     sign configurations.archives
 }
 
+// After uploading, must go to oss.sonatype.org
+// login.  Search staging-repositories for "jmatrix"
+// find your deploy, and click on it, then click the 'close' button.
+// http://central.sonatype.org/pages/releasing-the-deployment.html
 uploadArchives {
     repositories {
         mavenDeployer {

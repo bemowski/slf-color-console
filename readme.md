@@ -78,6 +78,8 @@ The LogWriter writes the formatted message to a configured PrintWriter.  Very ty
 
 # Releases
 
+1.0.8 - Allow system properties to override values in default properties file (slfcc.properties)
+
 1.0.7 - Configure level of individual loggers.
 
 1.0.6 - back off to java 1.7 compatibility.  (was defaulting to java 8)

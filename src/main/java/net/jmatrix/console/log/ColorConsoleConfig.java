@@ -36,11 +36,17 @@ public class ColorConsoleConfig {
          URL url=ColorConsoleConfig.class.getResource("/slfcc.properties");
          if (DEBUG)
             System.out.println("Properties url: "+url);
+         Properties p=null;
+
          if (url != null) {
-            Properties p=new Properties();
+            p=new Properties();
             p.load(url.openStream());
-            configure(p);
+            
+            p.putAll(System.getProperties());
+         } else {
+            p=System.getProperties();
          }
+         configure(p);
       } catch (Exception ex) {
          ex.printStackTrace();
       }
