@@ -80,6 +80,7 @@ public class ANSIColorFormatter extends Formatter {
    }
    
    private static final String shortLoggerName(String loggerName) {
+     if (loggerName == null) return "";
       return loggerName.substring(loggerName.lastIndexOf(".")+1);
    }
    

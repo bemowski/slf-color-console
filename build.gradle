@@ -19,14 +19,14 @@ buildscript {
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'  // required for sonatype
 apply plugin: 'io.codearte.nexus-staging'
 
 group = 'net.jmatrix'
-version = '1.0.8'
+version = '1.0.9'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -46,10 +46,6 @@ dependencies {
 }
 
 
-//gradle.buildFinished{
-//   copyRuntimeLibs()
-//}
-
 task copyRuntimeLibs(type: Copy) {
    into "build/libs/runtime"
    from configurations.runtime
@@ -64,8 +60,14 @@ build.finalizedBy(copyRuntimeLibs, copyCLI)
 
 // Maven publish to sonatype (for maven central)
 // AN OLDER POST, SOME INFO: http://jedicoder.blogspot.com/2011/11/automated-gradle-project-deployment-to.html
-// http://central.sonatype.org/pages/gradle.html
+
+//  1) publish/upload
+//     http://central.sonatype.org/pages/gradle.html
+//  2) release - human interaction
+//     https://central.sonatype.org/pages/releasing-the-deployment.html
+//
 //   gradle publishToMavenLocal
+//   gradle uploadArchives
 publishing {
     println "Publishing $version to maven local."
     publications {
@@ -99,8 +101,20 @@ signing {
 }
 
 // After uploading, must go to oss.sonatype.org
-// login.  Search staging-repositories for "jmatrix"
-// find your deploy, and click on it, then click the 'close' button.
+//   1) login.  
+//   2) Search staging-repositories for "jmatrix"
+//   3) find your deploy, and click on it, then click the 'close' button
+//   4) after closed, choose again and 'release'
+//
+// This build depends on several properties in ~/.gradle/gradle.properties
+//    sonatypeUsername=xxx
+//    sonatypePassword=yyy
+//
+// The earlier "signing" task requires (also in ~/.gradle/gradle.properties
+//    signing.keyId=
+//    signing.password=
+//    signing.secretKeyRingFile=/home/bemo/.gnupg/secring.gpg
+
 // http://central.sonatype.org/pages/releasing-the-deployment.html
 uploadArchives {
     repositories {
